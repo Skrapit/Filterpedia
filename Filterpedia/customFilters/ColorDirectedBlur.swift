@@ -34,7 +34,7 @@ class HomogeneousColorBlur: CIFilter
     var inputColorThreshold: CGFloat = 0.2
     var inputRadius: CGFloat = 10
     
-    override var attributes: [String : AnyObject]
+    override var attributes: [String : Any]
     {
         return [
             kCIAttributeFilterDisplayName: "Homogeneous Color Blur",
@@ -92,7 +92,7 @@ class HomogeneousColorBlur: CIFilter
             return nil
         }
         
-        let arguments = [inputImage, inputRadius, inputColorThreshold * sqrt(3.0)]
+        let arguments = [inputImage, inputRadius, inputColorThreshold * sqrt(3.0)] as [Any]
         
         return kernel.apply(
             withExtent: inputImage.extent,
@@ -126,7 +126,7 @@ class ColorDirectedBlur: CIFilter
     var inputIterations: CGFloat = 4
     var inputRadius: CGFloat = 10
     
-    override var attributes: [String : AnyObject]
+    override var attributes: [String : Any]
     {
         return [
             kCIAttributeFilterDisplayName: "Color Directed Blur",
@@ -235,7 +235,7 @@ class ColorDirectedBlur: CIFilter
                     (index, rect) in
                     return rect
                 },
-                                               arguments: [(accumulator?.image())!, inputRadius, 1 - inputThreshold])
+                                               arguments: [accumulator?.image(), inputRadius, 1 - inputThreshold])
             
             accumulator?.setImage(final!)
         }

@@ -75,10 +75,10 @@ class FilterDetail: UIView
                 self.histogramDisplay.imageRef = imageView.image?.cgImage
             }
             
-            UIView.animate(withDuration: 0.25)
-            {
+            UIView.animate(withDuration: 0.25, animations: {
                 self.histogramDisplay.alpha = self.histogramDisplayHidden ? 0 : 1
-            }
+            })
+            
         }
     }
     
@@ -130,10 +130,10 @@ class FilterDetail: UIView
         }
     }
     
-    private var currentFilter: CIFilter?
+    fileprivate var currentFilter: CIFilter?
     
     /// User defined filter parameter values
-    private var filterParameterValues: [String: AnyObject] = [kCIInputImageKey: assets.first!.ciImage]
+    fileprivate var filterParameterValues: [String: AnyObject] = [kCIInputImageKey: assets.first!.ciImage]
     
     override init(frame: CGRect)
     {
@@ -173,7 +173,7 @@ class FilterDetail: UIView
        histogramDisplayHidden = !histogramToggleSwitch.isOn
     }
     
-    @objc(viewForZoomingInScrollView:) func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
@@ -216,27 +216,24 @@ class FilterDetail: UIView
         
         for inputKey in currentFilter.inputKeys
         {
-            if let attribute = attributes[inputKey] as? [String : AnyObject]
+            if let attribute = attributes[inputKey] as? [String : Any]
             {
                 // default image
-                if let className = attribute[kCIAttributeClass] as? String
-                    , className == "CIImage" && filterParameterValues[inputKey] == nil
+                if let className = attribute[kCIAttributeClass] as? String, className == "CIImage" && filterParameterValues[inputKey] == nil
                 {
                     filterParameterValues[inputKey] = assets.first!.ciImage
                 }
                 
                 // ensure previous values don't exceed kCIAttributeSliderMax for this filter
                 if let maxValue = attribute[kCIAttributeSliderMax] as? Float,
-                    let filterParameterValue = filterParameterValues[inputKey] as? Float
-                    , filterParameterValue > maxValue
+                    let filterParameterValue = filterParameterValues[inputKey] as? Float, filterParameterValue > maxValue
                 {
-                    filterParameterValues[inputKey] = maxValue
+                    filterParameterValues[inputKey] = maxValue as AnyObject
                 }
                 
                 // ensure vector is correct length
                 if let defaultVector = attribute[kCIAttributeDefault] as? CIVector,
-                    let filterParameterValue = filterParameterValues[inputKey] as? CIVector
-                    , defaultVector.count != filterParameterValue.count
+                    let filterParameterValue = filterParameterValues[inputKey] as? CIVector, defaultVector.count != filterParameterValue.count
                 {
                     filterParameterValues[inputKey] = defaultVector
                 }
@@ -265,7 +262,7 @@ class FilterDetail: UIView
         
         let queue = currentFilter is VImageFilter ?
             DispatchQueue.main :
-            DispatchQueue.global(qos: DispatchQoS.QoSClass.default)
+            DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default)
  
         queue.async
         {
@@ -403,8 +400,8 @@ extension FilterDetail: UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: "FilterInputItemRenderer",
             for: indexPath) as! FilterInputItemRenderer
  
-        if let inputKey = currentFilter?.inputKeys[(indexPath as NSIndexPath).row],
-            let attribute = currentFilter?.attributes[inputKey] as? [String : AnyObject]
+        if let inputKey = currentFilter?.inputKeys[indexPath.row],
+            let attribute = currentFilter?.attributes[inputKey] as? [String : Any]
         {
             cell.detail = (inputKey: inputKey,
                 attribute: attribute,
@@ -431,7 +428,7 @@ extension FilterDetail: FilterInputItemRendererDelegate
         }
     }
     
-    @objc(tableView:shouldHighlightRowAtIndexPath:) func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool
     {
         return false
     }

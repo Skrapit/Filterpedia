@@ -52,14 +52,14 @@ class HistogramDisplay: UIView
         let blue = [UInt](repeating: 0, count: 256)
         let alpha = [UInt](repeating: 0, count: 256)
         
-        let redPtr = UnsafeMutablePointer<vImagePixelCount>(red)
-        let greenPtr = UnsafeMutablePointer<vImagePixelCount>(green)
-        let bluePtr = UnsafeMutablePointer<vImagePixelCount>(blue)
-        let alphaPtr = UnsafeMutablePointer<vImagePixelCount>(alpha)
+        let redPtr = UnsafeMutablePointer<vImagePixelCount>(mutating: red) as UnsafeMutablePointer<vImagePixelCount>?
+        let greenPtr = UnsafeMutablePointer<vImagePixelCount>(mutating: green) as UnsafeMutablePointer<vImagePixelCount>?
+        let bluePtr = UnsafeMutablePointer<vImagePixelCount>(mutating: blue) as UnsafeMutablePointer<vImagePixelCount>?
+        let alphaPtr = UnsafeMutablePointer<vImagePixelCount>(mutating: alpha) as UnsafeMutablePointer<vImagePixelCount>?
         
         let rgba = [redPtr, greenPtr, bluePtr, alphaPtr]
 
-        let histogram = UnsafeMutablePointer<UnsafeMutablePointer<vImagePixelCount>?>(rgba)
+        let histogram = UnsafeMutablePointer<UnsafeMutablePointer<vImagePixelCount>?>(mutating: rgba)
         
         vImageHistogramCalculation_ARGB8888(&inBuffer, histogram, UInt32(kvImageNoFlags))
 
@@ -147,10 +147,10 @@ class HistogramDisplay: UIView
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
-        UIView.animate(withDuration: 0.25)
-        {
+        UIView.animate(withDuration: 0.25, animations: {
             self.scaleLabel.alpha = 1
-        }
+        })
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -168,10 +168,10 @@ class HistogramDisplay: UIView
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
     {
-        UIView.animate(withDuration: 0.25)
-        {
+        UIView.animate(withDuration: 0.25, animations: {
             self.scaleLabel.alpha = 0
-        }
+        })
+        
     }
     
     func drawHistogram()

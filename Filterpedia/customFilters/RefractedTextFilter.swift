@@ -60,10 +60,10 @@ class RefractedTextFilter: CIFilter
         }
     }
     
-    private var refractingImage: CIImage?
-    private var rawTextImage: CIImage?
+    fileprivate var refractingImage: CIImage?
+    fileprivate var rawTextImage: CIImage?
     
-    override var attributes: [String : AnyObject]
+    override var attributes: [String : Any]
     {
         return [
             kCIAttributeFilterDisplayName: "Refracted Text",
@@ -165,7 +165,7 @@ class RefractedTextFilter: CIFilter
             refractingImage!,
             inputRefractiveIndex,
             inputLensScale,
-            inputLightingAmount]
+            inputLightingAmount] as [Any]
         
         let blurMask = rawTextImage?.applyingFilter("CIColorInvert", withInputParameters: nil)
         

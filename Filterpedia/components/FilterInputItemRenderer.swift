@@ -61,9 +61,9 @@ class FilterInputItemRenderer: UITableViewCell
     }()
     
     weak var delegate: FilterInputItemRendererDelegate?
-    private(set) var inputKey: String = ""
+    fileprivate(set) var inputKey: String = ""
     
-    var detail: (inputKey: String, attribute: [String : AnyObject], filterParameterValues: [String: AnyObject]) = ("", [String: AnyObject](), [String: AnyObject]())
+    var detail: (inputKey: String, attribute: [String : Any], filterParameterValues: [String: AnyObject]) = ("", [String: AnyObject](), [String: AnyObject]())
     {
         didSet
         {
@@ -73,10 +73,10 @@ class FilterInputItemRenderer: UITableViewCell
         }
     }
    
-    private var title: String = ""
-    private var filterParameterValues = [String: AnyObject]()
+    fileprivate var title: String = ""
+    fileprivate var filterParameterValues = [String: AnyObject]()
     
-    private(set) var attribute = [String : AnyObject]()
+    fileprivate(set) var attribute = [String : Any]()
     {
         didSet
         {
@@ -93,7 +93,7 @@ class FilterInputItemRenderer: UITableViewCell
         }
     }
  
-    private(set) var value: AnyObject?
+    fileprivate(set) var value: AnyObject?
     {
         didSet
         {
@@ -151,7 +151,7 @@ class FilterInputItemRenderer: UITableViewCell
     
     func sliderChangeHandler()
     {
-        value = slider.value
+        value = slider.value as AnyObject
     }
     
     func vectorSliderChangeHandler()
@@ -195,7 +195,7 @@ class FilterInputItemRenderer: UITableViewCell
             
             if let updatedText = editTextController.textFields?.first?.text
             {
-                self.value = updatedText
+                self.value = updatedText as AnyObject
                 
                 self.textEditButton.setTitle(updatedText, for: UIControlState())
             }
